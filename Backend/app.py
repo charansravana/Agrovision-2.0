@@ -11,7 +11,7 @@ app = Flask(__name__)
 CORS(app)  # Enable Cross-Origin Resource Sharing
 
 # Load the trained model
-model = load_model(r"C:/SIH/agrovision/Backend/plant_disease_model.h5")
+model = load_model(r"C:/Agrovision-2.0/Backend/plant_disease_model.h5")
 
 @app.route('/')
 def home():
