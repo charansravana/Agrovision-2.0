@@ -65,12 +65,34 @@ const App = () => {
   const getPredictedClass =(predictclass)=>{
 
     if (predictclass === 0) {
-      return "Bacterial leaf blight";
+      return "sheath_blight";
   } else if (predictclass === 1) {
-      return "Brown spot";
+      return "leaf_blast";
   } else if (predictclass === 2) {
-      return "Leaf smut";
-  } else {
+      return "rice_hispa";
+  }
+  else if (predictclass === 3) {
+      return "tungro";
+  }  
+  else if (predictclass === 4) {
+      return "neck_blast";
+  }
+  else if (predictclass === 5) {
+      return "leaf_scald";
+  }
+  else if (predictclass === 6) {
+      return "narrow_brown_spot";
+  }
+  else if (predictclass === 7) {
+      return "brown_spot";
+  }
+  else if (predictclass === 8) {
+      return "rice_yellow_orange_leaf";
+  }
+  else if (predictclass === 9) {
+      return "bacterial_leaf_blight";
+  }
+  else {
       return "Healthy";
   }
 
