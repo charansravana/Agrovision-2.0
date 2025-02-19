@@ -5,13 +5,16 @@ from tensorflow.keras.models import load_model
 from flask_cors import CORS
 from PIL import Image
 import io
-
+import os
 # Initialize Flask app
 app = Flask(__name__)
 CORS(app)  # Enable Cross-Origin Resource Sharing
 
 # Load the trained model
-model = load_model(r"C:/Agrovision-2.0/Backend/plant_disease_model.h5")
+# model = load_model(r"C:/Agrovision 2.0/Backend/model-2.h5")
+
+MODEL_PATH = os.path.join(os.path.dirname(__file__), "model-2.h5")
+model = load_model(MODEL_PATH)
 
 @app.route('/')
 def home():
@@ -42,5 +45,6 @@ def predict():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+    
 if __name__ == '__main__':
     app.run(debug=True)
