@@ -7,19 +7,19 @@ from PIL import Image
 import io
 import os
 
+# Disable GPU usage for TensorFlow (optional, for CPU-based inference)
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+
 # Initialize Flask app
 app = Flask(__name__)
-# CORS(app)  # Enable Cross-Origin Resource Sharing
+
+# Enable Cross-Origin Resource Sharing (CORS)
 CORS(app, resources={r"/*": {"origins": "*"}})  # Fully enable CORS
 
 # Set max upload size to 16MB
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
-
 # Load the trained model
-# model = load_model(r"C:/Agrovision 2.0/Backend/model-2.h5")
-
 MODEL_PATH = os.path.join(os.path.dirname(__file__), "model-2.h5")
 model = load_model(MODEL_PATH)
 
@@ -27,7 +27,7 @@ model = load_model(MODEL_PATH)
 def home():
     return "Hello, Flask is running successfully!"
 
-@app.route('/predict', methods=['GET','POST'])
+@app.route('/predict', methods=['POST'])
 def predict():
     try:
         # Check if an image file was uploaded
@@ -35,10 +35,17 @@ def predict():
             return jsonify({"error": "No file uploaded"}), 400
 
         file = request.files['file']
-        
-        # Open the image file
-        img = Image.open(io.BytesIO(file.read()))
-        
+
+        # Check if the file is empty
+        if file.filename == '':
+            return jsonify({"error": "Empty file uploaded"}), 400
+
+        try:
+            # Open the image file
+            img = Image.open(file)
+        except Exception:
+            return jsonify({"error": "Invalid image format"}), 400
+
         # Preprocess the image (resize & normalize)
         img = img.resize((224, 224))  # Adjust based on your model's input size
         img = np.array(img) / 255.0   # Normalize pixel values
@@ -52,6 +59,5 @@ def predict():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-    
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=10000,debug=True)
+    app.run(host='0.0.0.0', port=10000, debug=True)
