@@ -6,6 +6,8 @@ from flask_cors import CORS
 from PIL import Image
 import io
 import os
+
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 # Initialize Flask app
 app = Flask(__name__)
 CORS(app)  # Enable Cross-Origin Resource Sharing
@@ -47,4 +49,4 @@ def predict():
 
     
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=10000,debug=True)
