@@ -88,7 +88,7 @@ const App = () => {
       console.log("Uploading file:", file.name, "Size:", file.size);
 
       const response = await axios.post(
-        "http://127.0.0.1:10000/predict",
+        "http://192.168.113.154:10000/predict",
         formData,
         {
           headers: {
