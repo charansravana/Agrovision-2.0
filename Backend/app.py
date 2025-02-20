@@ -10,7 +10,12 @@ import os
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 # Initialize Flask app
 app = Flask(__name__)
-CORS(app)  # Enable Cross-Origin Resource Sharing
+# CORS(app)  # Enable Cross-Origin Resource Sharing
+CORS(app, resources={r"/*": {"origins": "*"}})  # Fully enable CORS
+
+# Set max upload size to 16MB
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
+
 
 # Load the trained model
 # model = load_model(r"C:/Agrovision 2.0/Backend/model-2.h5")
