@@ -27,7 +27,7 @@ model = load_model(MODEL_PATH)
 def home():
     return "Hello, Flask is running successfully!"
 
-@app.route('/predict', methods=['POST'])
+@app.route('/predict', methods=['GET','POST'])
 def predict():
     try:
         # Check if an image file was uploaded
