@@ -82,7 +82,7 @@ const App = () => {
 
   const uploadImage = async (file) => {
     const formData = new FormData();
-    formData.append("file", file);
+    formData.append("file", File);
 
     try {
       console.log("Uploading file:", file.name, "Size:", file.size);
