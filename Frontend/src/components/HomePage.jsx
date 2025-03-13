@@ -89,8 +89,8 @@ const App = () => {
 
       const response = await axios.post(
         "https://agrovision-2-0-2d1o.onrender.com",
-        {  
-        formData,
+        formData, // Correctly pass formData here
+        {
           headers: {
             "Content-Type": "multipart/form-data",
           },
@@ -129,7 +129,7 @@ const App = () => {
         error.message ||
         "Failed to process image";
       console.error("Final error message:", errorMessage);
-      alert(`Error in uploadimage: ${errorMessage}`);
+      alert(`Error in uploadImage: ${errorMessage}`);
       return null;
     }
   };
