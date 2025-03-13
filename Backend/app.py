@@ -64,16 +64,14 @@
 
 
 
-
-
 from flask import Flask, request, jsonify
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras.models import load_model
 from flask_cors import CORS
 from PIL import Image
-import io
 import os
+import io
 
 # Disable GPU usage for TensorFlow (optional, for CPU-based inference)
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
@@ -81,13 +79,13 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 # Initialize Flask app
 app = Flask(__name__)
 
-# Enable CORS with specific settings
-CORS(app, resources={r"/predict": {"origins": "*"}})
+# Enable CORS for the frontend
+CORS(app, resources={r"/predict": {"origins": "https://agrovision2.vercel.app/*"}})
 
 # Set max upload size to 16MB
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
-# Load the trained model only once
+# Load the trained model with error handling
 MODEL_PATH = os.path.join(os.path.dirname(__file__), "model-2.h5")
 
 try:
@@ -95,46 +93,50 @@ try:
     print("✅ Model loaded successfully!")
 except Exception as e:
     print(f"❌ Error loading model: {e}")
-    model = None  # Ensure the app doesn't crash
+    model = None  # Prevents crashes
 
 @app.route('/')
 def home():
-    return "✅ Flask server is running successfully!"
+    return jsonify({"message": "Flask backend is running successfully!"})
 
 @app.route('/predict', methods=['POST'])
 def predict():
     if model is None:
-        return jsonify({"error": "Model not loaded. Please check the server logs."}), 500
+        return jsonify({"error": "Model failed to load"}), 500
 
     try:
-        # Validate if a file is provided
+        # Check if file exists in request
         if 'file' not in request.files:
             return jsonify({"error": "No file uploaded"}), 400
 
         file = request.files['file']
 
-        # Validate file name
+        # Check if the file is empty
         if file.filename == '':
             return jsonify({"error": "Empty file uploaded"}), 400
 
-        # Validate image format
+        # Check file format
         try:
-            img = Image.open(file).convert("RGB")  # Convert to RGB (handle grayscale)
+            img = Image.open(file)
+            img = img.convert("RGB")  # Ensure compatibility
         except Exception:
             return jsonify({"error": "Invalid image format"}), 400
 
-        # Preprocess image (resize & normalize)
-        img = img.resize((224, 224))  # Adjust to match model's expected input
+        # Preprocess the image (resize & normalize)
+        img = img.resize((224, 224))  # Adjust size based on model's input
         img = np.array(img) / 255.0   # Normalize pixel values
         img = np.expand_dims(img, axis=0)  # Add batch dimension
 
-        # Run prediction
+        # Make prediction
         prediction = model.predict(img).tolist()
 
         return jsonify({"prediction": prediction})
 
     except Exception as e:
+        print(f"❌ Prediction error: {e}")  # Log error
         return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    # Read the PORT from environment variables for Render
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host='0.0.0.0', port=port, debug=True)
