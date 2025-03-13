@@ -88,7 +88,7 @@ const App = () => {
       console.log("Uploading file:", file.name, "Size:", file.size);
 
       const response = await axios.post(
-        "https://agrovision-2-0-2d1o.onrender.com",
+        "https://agrovision-2-0-2d1o.onrender.com/predict",
         {  
         formData,
           headers: {
